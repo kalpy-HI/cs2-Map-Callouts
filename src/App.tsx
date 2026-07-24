@@ -8,7 +8,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(maps[0].id);
   const [query, setQuery] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [showLabels, setShowLabels] = useState(false);
+  const [showLabels, setShowLabels] = useState(true);
   const [panelOpen, setPanelOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -83,6 +83,7 @@ export default function App() {
       <MapSelector maps={maps} selectedId={selectedId} onSelect={handleSelect} />
 
       <MapViewer
+        key={map.id}
         map={map}
         highlightId={hoveredId}
         visibleIds={visibleIds}

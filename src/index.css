@@ -211,25 +211,41 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 4px;
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, #1b1812, #100e0a);
 }
+/* .map-stage 是固定的「取景窗」：靠 inline-block 貼合縮放前的內容尺寸，
+   overflow:hidden 讓 .map-content 用 transform 縮放/平移時能被正確裁切 */
 .map-stage {
   position: relative;
   display: inline-block;
   line-height: 0;
   max-width: 100%;
-  max-height: calc(100vh - 68px);
+  max-height: calc(100vh - 56px);
   box-shadow: 0 8px 40px #0008;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   overflow: hidden;
+  touch-action: none;
+}
+.map-stage.zoomed {
+  cursor: grab;
+}
+.map-stage.zoomed:active {
+  cursor: grabbing;
+}
+.map-content {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 .map-stage img {
   display: block;
   max-width: 100%;
-  max-height: calc(100vh - 68px);
+  max-height: calc(100vh - 56px);
   width: auto;
   height: auto;
   user-select: none;
@@ -258,12 +274,12 @@ body {
 }
 .overlay .label {
   fill: var(--accent-strong);
-  font-size: 0.026px;
+  font-size: 0.032px;
   font-weight: 700;
   text-anchor: middle;
   paint-order: stroke;
   stroke: #000a;
-  stroke-width: 0.008px;
+  stroke-width: 0.009px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.12s;
@@ -271,11 +287,11 @@ body {
 .overlay .label.show {
   opacity: 1;
 }
-/* 「顯示報點名稱」開啟時，非 hover 的標籤用較小字體、降低擁擠感 */
+/* 「顯示報點名稱」開啟時，非 hover 的標籤字體 */
 .overlay .label.always {
-  font-size: 0.015px;
+  font-size: 0.021px;
   fill: #ffe6b0;
-  stroke-width: 0.006px;
+  stroke-width: 0.0075px;
 }
 
 .empty-hint {
@@ -284,6 +300,38 @@ body {
   font-size: 15px;
   text-align: center;
   pointer-events: none;
+}
+
+/* ── 縮放控制（+ / − / 重設）── */
+.zoom-controls {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+.zoom-controls button {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: #14120ecc;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  transition: background 0.12s, border-color 0.12s;
+}
+.zoom-controls button:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.zoom-controls button.reset {
+  font-size: 14px;
 }
 
 /* ── 右側報點清單 ── */
