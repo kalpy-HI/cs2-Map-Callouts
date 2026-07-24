@@ -215,14 +215,13 @@ body {
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, #1b1812, #100e0a);
 }
-/* .map-stage 是固定的「取景窗」：靠 inline-block 貼合縮放前的內容尺寸，
-   overflow:hidden 讓 .map-content 用 transform 縮放/平移時能被正確裁切 */
+/* .map-stage 是固定尺寸的「取景窗」（尺寸由 JS 依可用空間算出並以 inline
+   style 設定），overflow:hidden 裁切超出範圍的 .map-content。
+   .map-content 的縮放靠實際改變 width/height（版面尺寸），不是 CSS
+   transform:scale —— transform 只是把已點陣化的畫面拉伸，文字會模糊；
+   改版面尺寸則讓瀏覽器依新尺寸重新繪製 SVG 文字，放大後仍然清晰。 */
 .map-stage {
   position: relative;
-  display: inline-block;
-  line-height: 0;
-  max-width: 100%;
-  max-height: calc(100vh - 56px);
   box-shadow: 0 8px 40px #0008;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
@@ -236,18 +235,14 @@ body {
   cursor: grabbing;
 }
 .map-content {
-  position: relative;
-  display: inline-block;
-  line-height: 0;
-  transform-origin: 0 0;
-  will-change: transform;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .map-stage img {
   display: block;
-  max-width: 100%;
-  max-height: calc(100vh - 56px);
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   user-select: none;
   -webkit-user-drag: none;
 }

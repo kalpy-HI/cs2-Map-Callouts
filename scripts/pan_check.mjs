@@ -1,0 +1,21 @@
+import { chromium } from 'playwright-core';
+const CHROME='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const b=await chromium.launch({executablePath:CHROME});
+const p=await b.newPage({viewport:{width:1400,height:900}});
+await p.goto('http://localhost:4195/cs2-Map-Callouts/',{waitUntil:'networkidle'});
+await p.waitForTimeout(500);
+const stage = await p.$('.map-stage');
+let box = await stage.boundingBox();
+const cx = box.x+box.width*0.5, cy = box.y+box.height*0.5;
+await p.mouse.move(cx,cy);
+for (let i=0;i<6;i++){ await p.mouse.wheel(0,-120); await p.waitForTimeout(30); }
+await p.mouse.down();
+await p.mouse.move(cx-200, cy-150, {steps:10});
+await p.mouse.up();
+await p.waitForTimeout(200);
+await p.screenshot({path:'scratch/pan_after_refactor.png'});
+await p.click('.zoom-controls .reset');
+await p.waitForTimeout(200);
+await p.screenshot({path:'scratch/reset_after_refactor.png'});
+await b.close();
+console.log('done');
