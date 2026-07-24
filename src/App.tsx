@@ -8,6 +8,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(maps[0].id);
   const [query, setQuery] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [showLabels, setShowLabels] = useState(false);
 
   const map = getMapById(selectedId) ?? maps[0];
 
@@ -43,6 +44,14 @@ export default function App() {
         </span>
         <span className="tagline">快速查詢 · 切換地圖 · 立即報點</span>
         <span className="spacer" />
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={showLabels}
+            onChange={(e) => setShowLabels(e.target.checked)}
+          />
+          <span>顯示報點名稱</span>
+        </label>
         <a
           href="https://github.com/kalpy-hi/cs2-map-callouts"
           target="_blank"
@@ -59,6 +68,7 @@ export default function App() {
         highlightId={hoveredId}
         visibleIds={visibleIds}
         onHover={setHoveredId}
+        showAllLabels={showLabels}
       />
 
       <CalloutPanel

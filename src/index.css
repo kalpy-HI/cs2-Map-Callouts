@@ -76,6 +76,24 @@ body {
 .app-header a:hover {
   color: var(--accent);
 }
+.app-header .toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+.app-header .toggle input {
+  accent-color: var(--accent);
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+.app-header .toggle:hover {
+  color: var(--text);
+}
 
 /* ── 左側地圖選單 ── */
 .sidebar {
@@ -211,6 +229,12 @@ body {
 }
 .overlay .label.show {
   opacity: 1;
+}
+/* 「顯示報點名稱」開啟時，非 hover 的標籤用較小字體、降低擁擠感 */
+.overlay .label.always {
+  font-size: 0.015px;
+  fill: #ffe6b0;
+  stroke-width: 0.006px;
 }
 
 .empty-hint {

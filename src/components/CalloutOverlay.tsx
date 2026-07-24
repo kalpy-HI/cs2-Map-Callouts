@@ -8,11 +8,19 @@ interface Props {
   /** 搜尋過濾後仍符合的報點 id 集合；null 代表未過濾（全部顯示） */
   visibleIds: Set<string> | null;
   onHover: (id: string | null) => void;
+  /** 是否一律顯示所有報點名稱（不必 hover） */
+  showAllLabels: boolean;
 }
 
 /** 疊在雷達圖上的 SVG 報點層：hover 高亮並顯示中文標籤。
     支援面狀（polygon）與點狀（circle）兩種報點。 */
-export default function CalloutOverlay({ callouts, highlightId, visibleIds, onHover }: Props) {
+export default function CalloutOverlay({
+  callouts,
+  highlightId,
+  visibleIds,
+  onHover,
+  showAllLabels,
+}: Props) {
   return (
     <svg className="overlay" viewBox="0 0 1 1" preserveAspectRatio="none">
       {callouts.map((c) => {
@@ -41,9 +49,16 @@ export default function CalloutOverlay({ callouts, highlightId, visibleIds, onHo
       })}
       {callouts.map((c) => {
         const [lx, ly] = labelPosition(c);
-        const show = c.id === highlightId;
+        const dimmed = visibleIds !== null && !visibleIds.has(c.id);
+        const show = !dimmed && (showAllLabels || c.id === highlightId);
+        const always = showAllLabels && c.id !== highlightId;
         return (
-          <text key={`${c.id}-label`} className={`label${show ? ' show' : ''}`} x={lx} y={ly}>
+          <text
+            key={`${c.id}-label`}
+            className={`label${show ? ' show' : ''}${always ? ' always' : ''}`}
+            x={lx}
+            y={ly}
+          >
             {c.nameZh}
           </text>
         );

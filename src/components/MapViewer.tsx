@@ -6,12 +6,13 @@ interface Props {
   highlightId: string | null;
   visibleIds: Set<string> | null;
   onHover: (id: string | null) => void;
+  showAllLabels: boolean;
 }
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 /** 中央地圖檢視：雷達圖 + 報點疊層。 */
-export default function MapViewer({ map, highlightId, visibleIds, onHover }: Props) {
+export default function MapViewer({ map, highlightId, visibleIds, onHover, showAllLabels }: Props) {
   return (
     <main className="viewer">
       <div className="map-stage">
@@ -22,6 +23,7 @@ export default function MapViewer({ map, highlightId, visibleIds, onHover }: Pro
             highlightId={highlightId}
             visibleIds={visibleIds}
             onHover={onHover}
+            showAllLabels={showAllLabels}
           />
         ) : (
           <div className="empty-hint">
