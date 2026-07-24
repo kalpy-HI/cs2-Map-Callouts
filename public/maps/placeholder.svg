@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <!-- 通用佔位雷達圖：報點資料待補的地圖使用。 -->
+  <rect width="1000" height="1000" fill="#201d18"/>
+  <rect x="40" y="40" width="920" height="920" fill="none" stroke="#3a352b" stroke-width="2" stroke-dasharray="12 10"/>
+  <text x="500" y="480" fill="#5a5344" font-size="44" font-family="sans-serif" text-anchor="middle">報點資料待補</text>
+  <text x="500" y="540" fill="#453f33" font-size="28" font-family="sans-serif" text-anchor="middle">Callouts coming soon</text>
+</svg>
