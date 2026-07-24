@@ -1,69 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
-  <!-- 原創示意雷達圖：Mirage（非真實遊戲素材，僅為報點示意）。
-       座標與 src/data/maps.ts 的正規化 0..1 報點區對齊（乘以 1000）。 -->
+  <!-- 原創手繪示意雷達圖：Mirage（依中文報點圖重繪的原創示意，非遊戲原始素材）。
+       區塊位置對應 src/data/maps.ts 的報點座標（×1000）。 -->
   <defs>
     <style>
-      .floor { fill: #3c372b; stroke: #5b5340; stroke-width: 3; }
-      .path  { fill: #332f25; stroke: #4a4335; stroke-width: 2; }
-      .wall  { fill: none; stroke: #6a6048; stroke-width: 4; }
-      .zone  { fill: #7a7258; font: 600 22px sans-serif; opacity: 0.75; }
-      .site  { fill: #f0a020; font: 800 40px sans-serif; opacity: 0.85; }
-      .siteRing { fill: none; stroke: #f0a020; stroke-width: 4; opacity: 0.6; stroke-dasharray: 10 8; }
+      .floor { fill: #37322788; stroke: #5c543f; stroke-width: 2.5; }
+      .path  { fill: #2f2b2188; stroke: #4a4234; stroke-width: 2; }
+      .site  { fill: #f0a020; font: 800 44px sans-serif; opacity: 0.9; }
+      .ring  { fill: none; stroke: #f0a020; stroke-width: 4; opacity: 0.55; stroke-dasharray: 11 9; }
+      .spawn { fill: none; stroke: #57c060; stroke-width: 3; opacity: 0.6; }
     </style>
   </defs>
 
   <rect width="1000" height="1000" fill="#17150f"/>
 
-  <!-- 連接走道（底層，先畫讓房間蓋在上面接縫更自然） -->
+  <!-- 連接走道（底層） -->
   <g class="path">
-    <rect x="340" y="600" width="120" height="180"/>  <!-- T→中路/貓道 -->
-    <rect x="140" y="540" width="90"  height="240"/>  <!-- 左側 T→B -->
-    <rect x="600" y="440" width="120" height="260"/>  <!-- 連接/貓道帶 -->
-    <rect x="820" y="360" width="90"  height="380"/>  <!-- A→CT -->
-    <rect x="340" y="300" width="120" height="80"/>   <!-- 中路→窗/上中 -->
+    <rect x="360" y="470" width="130" height="180"/>  <!-- VIP → Jungle -->
+    <rect x="430" y="470" width="130" height="260"/>  <!-- 中路 → A -->
+    <rect x="560" y="380" width="240" height="70"/>   <!-- 中路 → 中遠/匪家 -->
+    <rect x="200" y="470" width="180" height="180"/>  <!-- 超市 → 警家 -->
+    <rect x="720" y="240" width="110" height="120"/>  <!-- 匪二樓 → 匪家 -->
+    <rect x="620" y="560" width="90"  height="220"/>  <!-- A1 → A2 -->
   </g>
 
-  <!-- 主要區域（與報點座標對齊） -->
+  <!-- 主要區域 -->
   <g class="floor">
-    <rect x="620" y="60"  width="200" height="180"/>  <!-- A大/坡道 -->
-    <rect x="660" y="260" width="240" height="200"/>  <!-- A點 -->
-    <rect x="840" y="60"  width="120" height="180"/>  <!-- 宮殿 -->
-    <rect x="500" y="280" width="140" height="160"/>  <!-- 俄羅斯方塊 -->
-    <rect x="440" y="140" width="160" height="520"/>  <!-- 中路（含上中/窗） -->
-    <rect x="600" y="440" width="120" height="140"/>  <!-- 連接 -->
-    <rect x="600" y="580" width="120" height="120"/>  <!-- 貓道 -->
-    <rect x="140" y="100" width="220" height="240"/>  <!-- B公寓 -->
-    <rect x="100" y="360" width="240" height="200"/>  <!-- B點 -->
-    <rect x="700" y="720" width="200" height="180"/>  <!-- CT家 -->
-    <rect x="100" y="740" width="240" height="180"/>  <!-- T家 -->
+    <rect x="90"  y="150" width="290" height="200"/>  <!-- B公寓/二樓 -->
+    <rect x="150" y="350" width="230" height="150"/>  <!-- 超市/窗戶 -->
+    <rect x="360" y="200" width="220" height="200"/>  <!-- 廚房/B連接/B小 -->
+    <rect x="540" y="150" width="210" height="140"/>  <!-- 匪二樓/上中 -->
+    <rect x="360" y="400" width="220" height="150"/>  <!-- VIP/中路 -->
+    <rect x="590" y="360" width="200" height="160"/>  <!-- 中遠/沙袋 -->
+    <rect x="790" y="290" width="140" height="150"/>  <!-- 匪家 -->
+    <rect x="340" y="560" width="150" height="150"/>  <!-- Jungle -->
+    <rect x="490" y="560" width="180" height="120"/>  <!-- 三明治/A1箱/跳台 -->
+    <rect x="650" y="560" width="240" height="150"/>  <!-- A1/房沿 -->
+    <rect x="200" y="620" width="200" height="150"/>  <!-- 警家 -->
+    <rect x="430" y="690" width="240" height="150"/>  <!-- A點/長短箱 -->
+    <rect x="650" y="700" width="240" height="140"/>  <!-- A2 -->
   </g>
 
-  <!-- 內部分隔線：窗 / 上中 -->
-  <g class="wall">
-    <line x1="440" y1="240" x2="600" y2="240"/>
-    <line x1="440" y1="340" x2="600" y2="340"/>
+  <!-- 出生點外框 -->
+  <g class="spawn">
+    <rect x="795" y="295" width="130" height="140"/>  <!-- 匪家 -->
+    <rect x="205" y="625" width="190" height="140"/>  <!-- 警家 -->
   </g>
 
   <!-- 炸彈點標記 -->
   <g>
-    <circle class="siteRing" cx="780" cy="360" r="52"/>
-    <text class="site" x="780" y="374" text-anchor="middle">A</text>
-    <circle class="siteRing" cx="220" cy="460" r="52"/>
-    <text class="site" x="220" y="474" text-anchor="middle">B</text>
-  </g>
-
-  <!-- 區域文字 -->
-  <g class="zone" text-anchor="middle">
-    <text x="720" y="155">A大</text>
-    <text x="900" y="155">宮殿</text>
-    <text x="570" y="365">方塊</text>
-    <text x="520" y="200">上中</text>
-    <text x="530" y="300">窗</text>
-    <text x="520" y="470">中路</text>
-    <text x="660" y="515">連接</text>
-    <text x="660" y="645">貓道</text>
-    <text x="250" y="225">B公寓</text>
-    <text x="800" y="815">CT家</text>
-    <text x="220" y="835">T家</text>
+    <circle class="ring" cx="225" cy="300" r="54"/>
+    <text class="site" x="225" y="315" text-anchor="middle">B</text>
+    <circle class="ring" cx="525" cy="750" r="54"/>
+    <text class="site" x="525" y="765" text-anchor="middle">A</text>
   </g>
 </svg>

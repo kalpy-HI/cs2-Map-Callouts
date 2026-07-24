@@ -1,5 +1,5 @@
 import type { Callout } from '../types';
-import { centroid, toPointsAttr } from '../utils/geometry';
+import { labelPosition, toPointsAttr, DEFAULT_RADIUS } from '../utils/geometry';
 
 interface Props {
   callouts: Callout[];
@@ -10,28 +10,37 @@ interface Props {
   onHover: (id: string | null) => void;
 }
 
-/** 疊在雷達圖上的 SVG 報點層：hover 高亮並顯示中文標籤。 */
+/** 疊在雷達圖上的 SVG 報點層：hover 高亮並顯示中文標籤。
+    支援面狀（polygon）與點狀（circle）兩種報點。 */
 export default function CalloutOverlay({ callouts, highlightId, visibleIds, onHover }: Props) {
   return (
-    <svg className="overlay" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="false">
+    <svg className="overlay" viewBox="0 0 1 1" preserveAspectRatio="none">
       {callouts.map((c) => {
         const dimmed = visibleIds !== null && !visibleIds.has(c.id);
         const highlight = c.id === highlightId;
+        const common = {
+          className: highlight ? 'highlight' : undefined,
+          style: dimmed ? { opacity: 0.12, pointerEvents: 'none' as const } : undefined,
+          onMouseEnter: () => onHover(c.id),
+          onMouseLeave: () => onHover(null),
+        };
+        const titleText = `${c.nameZh}${c.nameEn ? `（${c.nameEn}）` : ''}`;
+        if (c.point) {
+          const [cx, cy] = c.point;
+          return (
+            <circle key={c.id} cx={cx} cy={cy} r={c.radius ?? DEFAULT_RADIUS} {...common}>
+              <title>{titleText}</title>
+            </circle>
+          );
+        }
         return (
-          <polygon
-            key={c.id}
-            className={highlight ? 'highlight' : undefined}
-            points={toPointsAttr(c.points)}
-            style={dimmed ? { opacity: 0.15, pointerEvents: 'none' } : undefined}
-            onMouseEnter={() => onHover(c.id)}
-            onMouseLeave={() => onHover(null)}
-          >
-            <title>{c.nameZh}{c.nameEn ? `（${c.nameEn}）` : ''}</title>
+          <polygon key={c.id} points={toPointsAttr(c.points ?? [])} {...common}>
+            <title>{titleText}</title>
           </polygon>
         );
       })}
       {callouts.map((c) => {
-        const [lx, ly] = c.labelPos ?? centroid(c.points);
+        const [lx, ly] = labelPosition(c);
         const show = c.id === highlightId;
         return (
           <text key={`${c.id}-label`} className={`label${show ? ' show' : ''}`} x={lx} y={ly}>

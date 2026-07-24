@@ -1,14 +1,21 @@
 // 報點區域：以正規化 0..1 座標描述，與地圖圖片同一座標系。
+// 支援兩種形狀，擇一使用：
+//   - 面狀區域：提供 points（多邊形頂點）
+//   - 點狀熱點：提供 point（中心）＋可選 radius（半徑，預設 0.03）
 export interface Callout {
   /** 唯一 id（同一張圖內不重複） */
   id: string;
-  /** 中文報點名稱，例如「A大」「窗」「中路」 */
+  /** 中文報點名稱，例如「A大」「窗戶」「中路」 */
   nameZh: string;
-  /** 英文對照名稱，例如 "Palace"、"Window"、"Mid"（可選） */
+  /** 英文對照名稱（可選） */
   nameEn?: string;
-  /** 多邊形頂點，皆為 0..1 正規化座標 [x, y] */
-  points: [number, number][];
-  /** 文字標籤位置（可選）；未提供時以多邊形質心自動計算 */
+  /** 多邊形頂點，皆為 0..1 正規化座標 [x, y]（面狀區域用） */
+  points?: [number, number][];
+  /** 熱點中心 [x, y]，0..1 正規化（點狀報點用） */
+  point?: [number, number];
+  /** 熱點半徑，0..1 正規化，預設 0.03（僅 point 時有效） */
+  radius?: number;
+  /** 文字標籤位置（可選）；未提供時取 point 或多邊形質心 */
   labelPos?: [number, number];
 }
 
@@ -17,7 +24,7 @@ export interface MapData {
   id: string;
   /** 英文地圖名，例如 "Mirage" */
   nameEn: string;
-  /** 中文地圖名，例如 "沙漠2號" */
+  /** 中文地圖名，例如 "荒漠迷城" */
   nameZh: string;
   /** 雷達圖路徑（相對 public/），例如 "maps/mirage.svg" */
   radarImage: string;
