@@ -9,8 +9,8 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const map = getMapById(selectedId) ?? maps[0];
 
