@@ -48,25 +48,23 @@ src/
      radarImage: 'maps/inferno.png',   // 相對 public/
      active: true,
      callouts: [
-       {
-         id: 'banana',
-         nameZh: '香蕉道',
-         nameEn: 'Banana',
-         // 多邊形頂點，皆為 0..1 正規化座標（原點在圖片左上角）
-         points: [[0.2, 0.3], [0.4, 0.3], [0.4, 0.6], [0.2, 0.6]],
-       },
-       // …
+       // 點狀報點（大多數用這個）：中心 point ＋ 可選 radius
+       { id: 'banana', nameZh: '香蕉道', nameEn: 'Banana', point: [0.3, 0.45] },
+       // 面狀報點（較大區域）：多邊形 points
+       { id: 'a-site', nameZh: 'A點', points: [[0.6, 0.2], [0.8, 0.2], [0.8, 0.4], [0.6, 0.4]] },
      ],
    }
    ```
 
 ### 座標怎麼抓
 
-- 座標是 **0..1 正規化**：`x = 該點距左邊 / 圖片寬`、`y = 該點距上緣 / 圖片高`。與圖片實際像素尺寸無關，換圖不需重算比例。
-- `points` 是多邊形頂點（順時針或逆時針皆可），描出報點區的範圍。
-- `labelPos` 可省略；省略時中文標籤會顯示在多邊形質心。
+- 座標是 **0..1 正規化**：`x = 該點距左邊 / 圖片寬`、`y = 該點距上緣 / 圖片高`。與圖片實際像素尺寸無關，換圖不需重算比例（圖片與疊層以相同方式拉伸，永遠對齊）。
+- 報點形狀二擇一：`point:[x,y]`（＋可選 `radius`，預設 0.026）或 `points:[[x,y],…]` 多邊形。
+- `labelPos` 可省略；省略時標籤顯示在 `point` 或多邊形質心。
 
-> 骨架階段的 `public/maps/*.svg` 是**示意佔位圖**，非真實地圖。替換成真實雷達圖後，依需要微調各報點的多邊形座標即可。
+**校準工具**：`scripts/grid.mjs` 會把底圖疊上 0.1 座標格輸出成圖，方便直接讀出每個報點的座標；`scripts/verify.mjs` 會把 `scratch/callouts.json` 的報點畫回底圖檢查位置（需 `playwright-core`，用預裝的 Chromium）。Mirage/Dust II 的座標即以此校準對齊。
+
+> Mirage、Dust II 使用真實 minimap 底圖（`mirage.webp`、`dust2.png`）；其餘地圖暫用 `placeholder.svg`，補圖後把 `radarImage` 換掉即可。
 
 ## 部署（GitHub Pages · 自動）
 
@@ -83,4 +81,4 @@ src/
 
 ## 授權與素材說明
 
-程式碼供自由使用。CS2 地圖雷達圖為 Valve 之遊戲版權素材；本專案骨架僅提供**示意佔位圖**，請自行以合法授權之雷達圖替換後再公開發佈。
+程式碼供自由使用。`public/maps/` 內的 CS2 地圖 minimap 屬 Valve 之遊戲版權素材，由專案擁有者自行提供；如需公開發佈，請確認你有合法使用權，或改用你自製／授權明確的雷達圖替換。
