@@ -9,6 +9,7 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const map = getMapById(selectedId) ?? maps[0];
 
@@ -37,7 +38,7 @@ export default function App() {
   };
 
   return (
-    <div className="app">
+    <div className={`app${panelOpen ? ' panel-open' : ''}`}>
       <header className="app-header">
         <span className="logo">
           CS2 <span className="accent">中文報點</span>
@@ -52,6 +53,13 @@ export default function App() {
           />
           <span>顯示報點名稱</span>
         </label>
+        <button
+          className={`panel-toggle${panelOpen ? ' active' : ''}`}
+          onClick={() => setPanelOpen((o) => !o)}
+          aria-pressed={panelOpen}
+        >
+          {panelOpen ? '✕ 收合' : '🔍 搜尋報點'}
+        </button>
         <a
           href="https://github.com/kalpy-hi/cs2-map-callouts"
           target="_blank"
