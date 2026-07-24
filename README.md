@@ -2,6 +2,8 @@
 
 CS2 現役地圖的**中文報點查詢網站**。在網頁上快速切換地圖、滑鼠移到區域即顯示中文報點名稱，方便遊戲中即時報點。版面參考 [valoplant.gg](https://valoplant.gg)（左側地圖切換 · 中央互動地圖 · 右側報點清單）。
 
+**線上 demo**：https://kalpy-hi.github.io/cs2-Map-Callouts/
+
 ## 功能
 
 - **地圖切換**：左側清單一鍵切換現役圖池地圖。
@@ -66,16 +68,18 @@ src/
 
 > 骨架階段的 `public/maps/*.svg` 是**示意佔位圖**，非真實地圖。替換成真實雷達圖後，依需要微調各報點的多邊形座標即可。
 
-## 部署（GitHub Pages）
+## 部署（GitHub Pages · 自動）
 
-`vite.config.ts` 的 `base` 已設為 `'/cs2-Map-Callouts/'`（GitHub Pages 專案頁路徑）。
+已內建 GitHub Actions 工作流 `.github/workflows/deploy.yml`：push 到 `main` 或本開發分支時，自動 build 並部署到 GitHub Pages（也可在 Actions 頁面手動觸發）。
 
-```bash
-npm run build
-# 將 dist/ 內容發佈到 gh-pages 分支，或於 repo 設定啟用 Pages 指向 dist
-```
+**首次需一次性啟用 Pages**（此為 repo 設定，無法由程式碼開啟）：
 
-若改用自訂網域或使用者／組織頁（根路徑），把 `base` 改為 `'/'`。
+1. GitHub repo → **Settings** → **Pages**。
+2. **Build and deployment** 的 **Source** 選 **GitHub Actions**。
+3. 之後每次 push，工作流會自動部署；完成後即可造訪
+   **https://kalpy-hi.github.io/cs2-Map-Callouts/** 。
+
+`vite.config.ts` 的 `base` 已設為 `'/cs2-Map-Callouts/'`（對應專案頁路徑）。若改用自訂網域或使用者／組織頁（根路徑），把 `base` 改為 `'/'`。
 
 ## 授權與素材說明
 
