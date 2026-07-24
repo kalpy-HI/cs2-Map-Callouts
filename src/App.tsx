@@ -10,6 +10,7 @@ export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const map = getMapById(selectedId) ?? maps[0];
 
@@ -30,16 +31,26 @@ export default function App() {
     [query, filtered],
   );
 
-  // 切換地圖時清空 hover 與搜尋，避免殘留高亮。
+  // 切換地圖時清空 hover 與搜尋，避免殘留高亮；選好後收合選單讓地圖恢復最大。
   const handleSelect = (id: string) => {
     setSelectedId(id);
     setHoveredId(null);
     setQuery('');
+    setSidebarOpen(false);
   };
 
   return (
-    <div className={`app${panelOpen ? ' panel-open' : ''}`}>
+    <div className={`app${sidebarOpen ? ' sidebar-open' : ''}${panelOpen ? ' panel-open' : ''}`}>
       <header className="app-header">
+        <button
+          className={`panel-toggle icon-toggle${sidebarOpen ? ' active' : ''}`}
+          onClick={() => setSidebarOpen((o) => !o)}
+          aria-pressed={sidebarOpen}
+          aria-label="切換地圖選單"
+          title="切換地圖選單"
+        >
+          ☰
+        </button>
         <span className="logo">
           CS2 <span className="accent">中文報點</span>
         </span>

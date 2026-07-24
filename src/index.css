@@ -35,30 +35,39 @@ body {
 }
 
 /* ── App 版面（左：地圖選單 / 中：地圖 / 右：報點清單） ── */
+/* 左右兩欄預設收合（0 寬），地圖區塊盡可能大；各自獨立用 CSS 變數控制寬度，可任意組合開合 */
 .app {
+  --sidebar-w: 0px;
+  --panel-w: 0px;
   display: grid;
-  grid-template-columns: 260px 1fr 0;
-  grid-template-rows: 56px 1fr;
+  grid-template-columns: var(--sidebar-w) 1fr var(--panel-w);
+  grid-template-rows: 48px 1fr;
   grid-template-areas:
     'header header header'
     'sidebar viewer list';
   height: 100%;
   transition: grid-template-columns 0.2s ease;
 }
-.app.panel-open {
-  grid-template-columns: 260px 1fr 280px;
+.app.sidebar-open {
+  --sidebar-w: 260px;
 }
-/* 收合時隱藏右欄內容與左邊界線 */
+.app.panel-open {
+  --panel-w: 280px;
+}
+/* 收合時隱藏內容與邊界線，避免 0 寬欄位仍撐開版面 */
+.app:not(.sidebar-open) .sidebar {
+  display: none;
+}
 .app:not(.panel-open) .callout-panel {
-  border-left: none;
+  display: none;
 }
 
 .app-header {
   grid-area: header;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 20px;
+  gap: 10px;
+  padding: 0 14px;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border-strong);
 }
@@ -120,6 +129,11 @@ body {
 .app-header .panel-toggle.active {
   border-color: var(--accent);
   color: var(--accent);
+}
+.app-header .icon-toggle {
+  padding: 6px 9px;
+  font-size: 15px;
+  line-height: 1;
 }
 
 /* ── 左側地圖選單 ── */
@@ -197,7 +211,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 10px;
   overflow: hidden;
   background: radial-gradient(circle at 50% 40%, #1b1812, #100e0a);
 }
@@ -206,7 +220,7 @@ body {
   display: inline-block;
   line-height: 0;
   max-width: 100%;
-  max-height: calc(100vh - 96px);
+  max-height: calc(100vh - 68px);
   box-shadow: 0 8px 40px #0008;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
@@ -215,7 +229,7 @@ body {
 .map-stage img {
   display: block;
   max-width: 100%;
-  max-height: calc(100vh - 96px);
+  max-height: calc(100vh - 68px);
   width: auto;
   height: auto;
   user-select: none;
@@ -342,10 +356,9 @@ body {
 
 /* ── 響應式：窄螢幕收合成單欄 ── */
 @media (max-width: 900px) {
-  .app,
-  .app.panel-open {
+  .app {
     grid-template-columns: 1fr;
-    grid-template-rows: 56px auto auto auto;
+    grid-template-rows: 48px auto auto auto;
     grid-template-areas:
       'header'
       'sidebar'
@@ -354,11 +367,8 @@ body {
     height: auto;
     min-height: 100%;
   }
-  /* 手機版：收合時整個右欄隱藏，展開才出現在地圖下方 */
-  .app:not(.panel-open) .callout-panel {
-    display: none;
-  }
-  .sidebar {
+  /* 手機版展開地圖選單時，改為地圖上方可橫向滑動的縮圖列 */
+  .app.sidebar-open .sidebar {
     display: flex;
     gap: 6px;
     overflow-x: auto;
@@ -383,5 +393,27 @@ body {
     border-left: none;
     border-top: 1px solid var(--border-strong);
     max-height: 60vh;
+  }
+}
+
+/* 手機窄螢幕：header 精簡成單行，隱藏次要文字，避免換行擠壓 */
+@media (max-width: 640px) {
+  .app-header {
+    gap: 6px;
+    padding: 0 8px;
+  }
+  .app-header .tagline,
+  .app-header .toggle span,
+  .app-header a {
+    display: none;
+  }
+  .app-header .logo {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .app-header .panel-toggle:not(.icon-toggle) {
+    padding: 6px 8px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 }
