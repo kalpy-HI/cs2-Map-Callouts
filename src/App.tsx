@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { maps, getMapById } from './data/maps';
+import type { TacticTool, TacticsData } from './types';
+import { EMPTY_TACTICS, TACTIC_COLORS, loadTactics, saveTactics, tacticsKey } from './tactics';
+import TacticsToolbar, { type ArmedMarker } from './components/TacticsToolbar';
 import MapSelector from './components/MapSelector';
 import MapViewer from './components/MapViewer';
 import CalloutPanel from './components/CalloutPanel';
@@ -15,6 +18,16 @@ export default function App() {
   const [levelIdx, setLevelIdx] = useState(0);
   const [lang, setLang] = useState<'zh' | 'en'>('zh');
 
+  // ── 戰術板 ──
+  const [tacticsOn, setTacticsOn] = useState(false);
+  const [tool, setTool] = useState<TacticTool>('none');
+  const [color, setColor] = useState(TACTIC_COLORS[0]);
+  const [armed, setArmed] = useState<ArmedMarker | null>(null);
+  const [store, setStore] = useState(() => loadTactics());
+  // 每張圖（每層）各自一份復原堆疊
+  const undoRef = useRef<Record<string, TacticsData[]>>({});
+  const [undoTick, setUndoTick] = useState(0);
+
   const map = getMapById(selectedId) ?? maps[0];
   // 多層地圖（如 Nuke）以目前樓層的雷達圖與報點為準；單層地圖直接用本身的。
   const view = map.levels ? map.levels[Math.min(levelIdx, map.levels.length - 1)] : map;
@@ -29,6 +42,39 @@ export default function App() {
         (c.nameEn?.toLowerCase().includes(q) ?? false),
     );
   }, [view, query]);
+
+  const levelId = map.levels ? map.levels[Math.min(levelIdx, map.levels.length - 1)].id : 'default';
+  const tKey = tacticsKey(map.id, levelId);
+  const tactics = store[tKey] ?? EMPTY_TACTICS;
+
+  useEffect(() => {
+    saveTactics(store);
+  }, [store]);
+
+  const setTactics = useCallback(
+    (next: TacticsData) => {
+      setStore((prev) => {
+        const cur = prev[tKey] ?? EMPTY_TACTICS;
+        const stack = undoRef.current[tKey] ?? (undoRef.current[tKey] = []);
+        stack.push(cur);
+        if (stack.length > 50) stack.shift();
+        return { ...prev, [tKey]: next };
+      });
+      setUndoTick((n) => n + 1);
+    },
+    [tKey],
+  );
+
+  const undo = useCallback(() => {
+    const stack = undoRef.current[tKey];
+    if (!stack?.length) return;
+    const prevData = stack.pop()!;
+    setStore((prev) => ({ ...prev, [tKey]: prevData }));
+    setUndoTick((n) => n + 1);
+  }, [tKey]);
+
+  const canUndo = (undoRef.current[tKey]?.length ?? 0) > 0 && undoTick >= 0;
+  const tacticsEmpty = tactics.strokes.length === 0 && tactics.markers.length === 0;
 
   // 有搜尋字串時，地圖上只保留符合的報點（其餘淡化）。
   const visibleIds = useMemo(
@@ -86,6 +132,17 @@ export default function App() {
           <span>顯示報點名稱</span>
         </label>
         <button
+          className={`panel-toggle${tacticsOn ? ' active' : ''}`}
+          onClick={() => {
+            setTacticsOn((v) => !v);
+            setTool('none');
+            setArmed(null);
+          }}
+          aria-pressed={tacticsOn}
+        >
+          ✏️ 戰術板
+        </button>
+        <button
           className={`panel-toggle${panelOpen ? ' active' : ''}`}
           onClick={() => setPanelOpen((o) => !o)}
           aria-pressed={panelOpen}
@@ -115,7 +172,28 @@ export default function App() {
         onHover={setHoveredId}
         showAllLabels={showLabels}
         lang={lang}
+        tacticsOn={tacticsOn}
+        tool={tool}
+        color={color}
+        armed={armed}
+        onArm={setArmed}
+        tactics={tactics}
+        onTacticsChange={setTactics}
       />
+      {tacticsOn && (
+        <TacticsToolbar
+          tool={tool}
+          onToolChange={setTool}
+          color={color}
+          onColorChange={setColor}
+          armed={armed}
+          onArm={setArmed}
+          onUndo={undo}
+          canUndo={canUndo}
+          onClear={() => setTactics(EMPTY_TACTICS)}
+          isEmpty={tacticsEmpty}
+        />
+      )}
 
       <CalloutPanel
         callouts={view.callouts}

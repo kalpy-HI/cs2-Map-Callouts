@@ -331,6 +331,115 @@ body {
   pointer-events: none;
 }
 
+/* ── 戰術板 ── */
+.tactics-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 戰術層整體不吃事件（畫線由地圖層處理），只有標記與橡皮擦命中區可點，
+   這樣既能隨時拖曳站位，又不擋住底下報點的 hover */
+.tactics-layer {
+  pointer-events: none;
+}
+.tactics-layer .tactic-marker,
+.tactics-layer path[stroke='transparent'] {
+  pointer-events: auto;
+}
+/* 戰術操作中停用報點 hover，避免干擾畫線與放置 */
+.map-stage.tactics-active .overlay {
+  pointer-events: none;
+}
+.map-stage.drawing {
+  cursor: crosshair;
+}
+
+.tactics-toolbar {
+  grid-area: viewer;
+  align-self: start;
+  justify-self: center;
+  z-index: 5;
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: #14120eee;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px #0009;
+  backdrop-filter: blur(3px);
+}
+.tt-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tt-group + .tt-group {
+  border-left: 1px solid var(--border-strong);
+  padding-left: 10px;
+}
+.tactics-toolbar button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-panel-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.tactics-toolbar button:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+.tactics-toolbar button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.tactics-toolbar button.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.tt-colors .swatch {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #0006;
+}
+.tt-colors .swatch.active {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.tt-roster {
+  flex-wrap: wrap;
+  max-width: 320px;
+}
+.tt-roster .pawn {
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #10100c;
+  font-weight: 800;
+  font-size: 12px;
+  border: 2px solid transparent;
+}
+.tt-roster .pawn.active {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.tt-hint {
+  font-size: 12px;
+  color: var(--accent);
+}
+
 /* ── 樓層切換（多層地圖，如 Nuke）── */
 .level-controls {
   position: absolute;

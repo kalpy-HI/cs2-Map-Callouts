@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MapData } from '../types';
+import type { MapData, TacticMarker, TacticStroke, TacticTool, TacticsData } from '../types';
 import CalloutOverlay from './CalloutOverlay';
+import TacticsLayer from './TacticsLayer';
+import type { ArmedMarker } from './TacticsToolbar';
+import { newId } from '../tactics';
 
 interface Props {
   map: MapData;
@@ -15,7 +18,18 @@ interface Props {
   onHover: (id: string | null) => void;
   showAllLabels: boolean;
   lang: 'zh' | 'en';
+  /** 戰術板：關閉時（tacticsOn=false）完全不影響原本操作 */
+  tacticsOn: boolean;
+  tool: TacticTool;
+  color: string;
+  armed: ArmedMarker | null;
+  onArm: (m: ArmedMarker | null) => void;
+  tactics: TacticsData;
+  onTacticsChange: (d: TacticsData) => void;
 }
+
+/** 畫筆取樣：距離小於此值就不新增點，避免路徑過於密集。 */
+const MIN_SAMPLE_DIST = 0.004;
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 const MIN_ZOOM = 1;
@@ -46,6 +60,13 @@ export default function MapViewer({
   onHover,
   showAllLabels,
   lang,
+  tacticsOn,
+  tool,
+  color,
+  armed,
+  onArm,
+  tactics,
+  onTacticsChange,
 }: Props) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -54,6 +75,11 @@ export default function MapViewer({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
+  const [draft, setDraft] = useState<TacticStroke | null>(null);
+  const markerDragRef = useRef<string | null>(null);
+  // 有啟用戰術工具時要接管指標事件（停用平移與報點 hover）
+  const drawing = tacticsOn && tool !== 'none';
+  const tacticsActive = tacticsOn && (tool !== 'none' || armed !== null);
 
   // 取得雷達圖原始像素尺寸（與畫面上實際渲染大小無關）。
   useEffect(() => {
@@ -134,11 +160,48 @@ export default function MapViewer({
   }, [zoomAt]);
 
   const onPointerDown = (e: React.PointerEvent) => {
+    if (tacticsOn && armed) {
+      const [x, y] = toNorm(e.clientX, e.clientY);
+      onTacticsChange({
+        ...tactics,
+        markers: [...tactics.markers, { id: newId(), team: armed.team, label: armed.label, point: [x, y] }],
+      });
+      onArm(null);
+      return;
+    }
+    if (drawing) {
+      if (tool === 'eraser') return; // 由各物件自行處理點擊刪除
+      (e.target as Element).setPointerCapture(e.pointerId);
+      const p = toNorm(e.clientX, e.clientY);
+      setDraft({ id: newId(), kind: tool === 'arrow' ? 'arrow' : 'pen', color, width: 3, points: [p, p] });
+      return;
+    }
     if (zoom <= MIN_ZOOM) return;
     (e.target as Element).setPointerCapture(e.pointerId);
     dragRef.current = { startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
   };
   const onPointerMove = (e: React.PointerEvent) => {
+    if (markerDragRef.current) {
+      const [x, y] = toNorm(e.clientX, e.clientY);
+      onTacticsChange({
+        ...tactics,
+        markers: tactics.markers.map((m) =>
+          m.id === markerDragRef.current ? { ...m, point: [x, y] as [number, number] } : m,
+        ),
+      });
+      return;
+    }
+    if (draft) {
+      const p = toNorm(e.clientX, e.clientY);
+      setDraft((d) => {
+        if (!d) return d;
+        if (d.kind === 'arrow') return { ...d, points: [d.points[0], p] };
+        const last = d.points[d.points.length - 1];
+        if (Math.hypot(p[0] - last[0], p[1] - last[1]) < MIN_SAMPLE_DIST) return d;
+        return { ...d, points: [...d.points, p] };
+      });
+      return;
+    }
     if (!dragRef.current || !base) return;
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
@@ -148,7 +211,44 @@ export default function MapViewer({
     });
   };
   const onPointerUp = () => {
+    if (markerDragRef.current) {
+      markerDragRef.current = null;
+      return;
+    }
+    if (draft) {
+      // 只有單一點的線（純點擊）不留下痕跡
+      if (draft.points.length > 1) onTacticsChange({ ...tactics, strokes: [...tactics.strokes, draft] });
+      setDraft(null);
+      return;
+    }
     dragRef.current = null;
+  };
+
+  /** 螢幕座標 → 地圖 0..1 正規化座標（已考慮縮放與平移）。 */
+  const toNorm = useCallback(
+    (clientX: number, clientY: number): [number, number] => {
+      const r = stageRef.current!.getBoundingClientRect();
+      const b = base!;
+      return [
+        (clientX - r.left - pan.x) / (b.w * zoom),
+        (clientY - r.top - pan.y) / (b.h * zoom),
+      ];
+    },
+    [base, pan, zoom],
+  );
+
+  const eraseItem = (kind: 'stroke' | 'marker', id: string) => {
+    onTacticsChange(
+      kind === 'stroke'
+        ? { ...tactics, strokes: tactics.strokes.filter((s) => s.id !== id) }
+        : { ...tactics, markers: tactics.markers.filter((m) => m.id !== id) },
+    );
+  };
+
+  const startMarkerDrag = (e: React.PointerEvent, m: TacticMarker) => {
+    if (!tacticsOn) return;
+    (e.target as Element).setPointerCapture(e.pointerId);
+    markerDragRef.current = m.id;
   };
 
   const resetZoom = () => {
@@ -164,7 +264,9 @@ export default function MapViewer({
     <main className="viewer" ref={viewerRef}>
       {base && (
         <div
-          className={`map-stage${zoom > MIN_ZOOM ? ' zoomed' : ''}`}
+          className={`map-stage${zoom > MIN_ZOOM ? ' zoomed' : ''}${
+            drawing ? ' drawing' : ''
+          }${tacticsActive ? ' tactics-active' : ''}`}
           ref={stageRef}
           style={{ width: base.w, height: base.h }}
           onPointerDown={onPointerDown}
@@ -185,6 +287,16 @@ export default function MapViewer({
                 onHover={onHover}
                 showAllLabels={showAllLabels}
                 lang={lang}
+              />
+            )}
+            {tacticsOn && (
+              <TacticsLayer
+                data={tactics}
+                draft={draft}
+                tool={tool}
+                onErase={eraseItem}
+                onMarkerPointerDown={startMarkerDrag}
+                markersDraggable={tool === 'none' && !armed}
               />
             )}
           </div>

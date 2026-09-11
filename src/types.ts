@@ -23,6 +23,35 @@ export interface Callout {
   labelPos?: [number, number];
 }
 
+// ── 戰術板 ──────────────────────────────────────────────
+/** 目前使用的戰術工具；'none' 為一般檢視（可平移、hover 報點）。 */
+export type TacticTool = 'none' | 'pen' | 'arrow' | 'eraser';
+
+/** 一筆手繪線條或箭頭；points 為 0..1 正規化座標，隨地圖縮放平移。 */
+export interface TacticStroke {
+  id: string;
+  kind: 'pen' | 'arrow';
+  color: string;
+  /** 線寬（螢幕像素，用 non-scaling-stroke 維持視覺粗細一致） */
+  width: number;
+  points: [number, number][];
+}
+
+/** 地圖上的人員站位標記。 */
+export interface TacticMarker {
+  id: string;
+  team: 'ct' | 't';
+  /** 顯示的號碼，例如 "1"～"5" */
+  label: string;
+  point: [number, number];
+}
+
+/** 單一地圖（單一樓層）的戰術內容。 */
+export interface TacticsData {
+  strokes: TacticStroke[];
+  markers: TacticMarker[];
+}
+
 /** 多層地圖的單一樓層（例如 Nuke 的上層／下層）。 */
 export interface MapLevel {
   /** 樓層 id，例如 "default" / "lower" */
