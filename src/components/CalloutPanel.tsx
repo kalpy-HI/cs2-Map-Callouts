@@ -8,6 +8,7 @@ interface Props {
   filtered: Callout[];
   highlightId: string | null;
   onHover: (id: string | null) => void;
+  lang: 'zh' | 'en';
 }
 
 /** 右側：搜尋框 + 報點清單，與地圖雙向連動。 */
@@ -18,6 +19,7 @@ export default function CalloutPanel({
   filtered,
   highlightId,
   onHover,
+  lang,
 }: Props) {
   return (
     <aside className="callout-panel" aria-label="報點清單">
@@ -49,8 +51,8 @@ export default function CalloutPanel({
                 onMouseEnter={() => onHover(c.id)}
                 onMouseLeave={() => onHover(null)}
               >
-                <span className="zh">{c.nameZh}</span>
-                {c.nameEn && <span className="en">{c.nameEn}</span>}
+                <span className="zh">{lang === 'en' ? c.nameEn ?? c.nameZh : c.nameZh}</span>
+                <span className="en">{lang === 'en' ? c.nameZh : c.nameEn}</span>
               </div>
             ))}
           </>

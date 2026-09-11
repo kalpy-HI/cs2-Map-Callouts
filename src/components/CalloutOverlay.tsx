@@ -10,7 +10,13 @@ interface Props {
   onHover: (id: string | null) => void;
   /** 是否一律顯示所有報點名稱（不必 hover） */
   showAllLabels: boolean;
+  /** 標籤語言 */
+  lang: 'zh' | 'en';
 }
+
+/** 依語言取得報點顯示名稱（缺英文時退回中文）。 */
+export const calloutLabel = (c: Callout, lang: 'zh' | 'en') =>
+  lang === 'en' ? c.nameEn ?? c.nameZh : c.nameZh;
 
 /** 疊在雷達圖上的 SVG 報點層：hover 高亮並顯示中文標籤。
     支援面狀（polygon）與點狀（circle）兩種報點。 */
@@ -20,6 +26,7 @@ export default function CalloutOverlay({
   visibleIds,
   onHover,
   showAllLabels,
+  lang,
 }: Props) {
   return (
     <svg className="overlay" viewBox="0 0 1 1" preserveAspectRatio="none">
@@ -35,10 +42,13 @@ export default function CalloutOverlay({
         const titleText = `${c.nameZh}${c.nameEn ? `（${c.nameEn}）` : ''}`;
         if (c.point) {
           const [cx, cy] = c.point;
+          // rx/ry 為依實際區域範圍算出的橢圓；未提供時退回等半徑圓形
+          const rx = c.rx ?? c.radius ?? DEFAULT_RADIUS;
+          const ry = c.ry ?? c.radius ?? DEFAULT_RADIUS;
           return (
-            <circle key={c.id} cx={cx} cy={cy} r={c.radius ?? DEFAULT_RADIUS} {...common}>
+            <ellipse key={c.id} cx={cx} cy={cy} rx={rx} ry={ry} {...common}>
               <title>{titleText}</title>
-            </circle>
+            </ellipse>
           );
         }
         return (
@@ -59,7 +69,7 @@ export default function CalloutOverlay({
             x={lx}
             y={ly}
           >
-            {c.nameZh}
+            {calloutLabel(c, lang)}
           </text>
         );
       })}

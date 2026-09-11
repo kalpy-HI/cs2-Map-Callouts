@@ -14,6 +14,7 @@ interface Props {
   visibleIds: Set<string> | null;
   onHover: (id: string | null) => void;
   showAllLabels: boolean;
+  lang: 'zh' | 'en';
 }
 
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
@@ -44,6 +45,7 @@ export default function MapViewer({
   visibleIds,
   onHover,
   showAllLabels,
+  lang,
 }: Props) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -182,6 +184,7 @@ export default function MapViewer({
                 visibleIds={visibleIds}
                 onHover={onHover}
                 showAllLabels={showAllLabels}
+                lang={lang}
               />
             )}
           </div>

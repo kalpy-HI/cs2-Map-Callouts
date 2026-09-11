@@ -13,8 +13,12 @@ export interface Callout {
   points?: [number, number][];
   /** 熱點中心 [x, y]，0..1 正規化（點狀報點用） */
   point?: [number, number];
-  /** 熱點半徑，0..1 正規化，預設 0.03（僅 point 時有效） */
+  /** 熱點半徑，0..1 正規化，預設 0.03（僅 point 時有效；圓形） */
   radius?: number;
+  /** 橢圓熱點的水平半徑（0..1）；與 ry 搭配可貼合實際區域的長寬比例 */
+  rx?: number;
+  /** 橢圓熱點的垂直半徑（0..1） */
+  ry?: number;
   /** 文字標籤位置（可選）；未提供時取 point 或多邊形質心 */
   labelPos?: [number, number];
 }

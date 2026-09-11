@@ -136,6 +136,36 @@ body {
   line-height: 1;
 }
 
+/* ── 報點語言切換（中／EN）── */
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.lang-toggle button {
+  padding: 6px 11px;
+  border: none;
+  background: var(--bg-panel-2);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.lang-toggle button + button {
+  border-left: 1px solid var(--border-strong);
+}
+.lang-toggle button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.lang-toggle button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
 /* ── 左側地圖選單 ── */
 .sidebar {
   grid-area: sidebar;
@@ -254,7 +284,8 @@ body {
   height: 100%;
 }
 .overlay polygon,
-.overlay circle {
+.overlay circle,
+.overlay ellipse {
   fill: #ffffff08;
   stroke: #ffffff20;
   stroke-width: 0.003;
@@ -264,7 +295,9 @@ body {
 .overlay polygon:hover,
 .overlay polygon.highlight,
 .overlay circle:hover,
-.overlay circle.highlight {
+.overlay circle.highlight,
+.overlay ellipse:hover,
+.overlay ellipse.highlight {
   fill: var(--accent-soft);
   stroke: var(--accent);
 }

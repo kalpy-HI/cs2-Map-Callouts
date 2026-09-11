@@ -13,6 +13,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [levelIdx, setLevelIdx] = useState(0);
+  const [lang, setLang] = useState<'zh' | 'en'>('zh');
 
   const map = getMapById(selectedId) ?? maps[0];
   // 多層地圖（如 Nuke）以目前樓層的雷達圖與報點為準；單層地圖直接用本身的。
@@ -35,13 +36,12 @@ export default function App() {
     [query, filtered],
   );
 
-  // 切換地圖時清空 hover 與搜尋，避免殘留高亮；選好後收合選單讓地圖恢復最大。
+  // 切換地圖時清空 hover 與搜尋，避免殘留高亮；選單維持開啟以便連續切換。
   const handleSelect = (id: string) => {
     setSelectedId(id);
     setHoveredId(null);
     setQuery('');
     setLevelIdx(0);
-    setSidebarOpen(false);
   };
 
   return (
@@ -61,6 +61,22 @@ export default function App() {
         </span>
         <span className="tagline">快速查詢 · 切換地圖 · 立即報點</span>
         <span className="spacer" />
+        <div className="lang-toggle" role="group" aria-label="報點語言">
+          <button
+            className={lang === 'zh' ? 'active' : undefined}
+            onClick={() => setLang('zh')}
+            aria-pressed={lang === 'zh'}
+          >
+            中
+          </button>
+          <button
+            className={lang === 'en' ? 'active' : undefined}
+            onClick={() => setLang('en')}
+            aria-pressed={lang === 'en'}
+          >
+            EN
+          </button>
+        </div>
         <label className="toggle">
           <input
             type="checkbox"
@@ -98,6 +114,7 @@ export default function App() {
         visibleIds={visibleIds}
         onHover={setHoveredId}
         showAllLabels={showLabels}
+        lang={lang}
       />
 
       <CalloutPanel
@@ -107,6 +124,7 @@ export default function App() {
         filtered={filtered}
         highlightId={hoveredId}
         onHover={setHoveredId}
+        lang={lang}
       />
     </div>
   );
