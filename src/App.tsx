@@ -12,18 +12,22 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  const [levelIdx, setLevelIdx] = useState(0);
+
   const map = getMapById(selectedId) ?? maps[0];
+  // 多層地圖（如 Nuke）以目前樓層的雷達圖與報點為準；單層地圖直接用本身的。
+  const view = map.levels ? map.levels[Math.min(levelIdx, map.levels.length - 1)] : map;
 
   // 依搜尋字串過濾報點（比對中文與英文名，忽略大小寫）。
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return map.callouts;
-    return map.callouts.filter(
+    if (!q) return view.callouts;
+    return view.callouts.filter(
       (c) =>
         c.nameZh.toLowerCase().includes(q) ||
         (c.nameEn?.toLowerCase().includes(q) ?? false),
     );
-  }, [map, query]);
+  }, [view, query]);
 
   // 有搜尋字串時，地圖上只保留符合的報點（其餘淡化）。
   const visibleIds = useMemo(
@@ -36,6 +40,7 @@ export default function App() {
     setSelectedId(id);
     setHoveredId(null);
     setQuery('');
+    setLevelIdx(0);
     setSidebarOpen(false);
   };
 
@@ -83,8 +88,12 @@ export default function App() {
       <MapSelector maps={maps} selectedId={selectedId} onSelect={handleSelect} />
 
       <MapViewer
-        key={map.id}
+        key={`${map.id}-${view.radarImage}`}
         map={map}
+        radarImage={view.radarImage}
+        callouts={view.callouts}
+        levelIdx={levelIdx}
+        onLevelChange={setLevelIdx}
         highlightId={hoveredId}
         visibleIds={visibleIds}
         onHover={setHoveredId}
@@ -92,7 +101,7 @@ export default function App() {
       />
 
       <CalloutPanel
-        callouts={map.callouts}
+        callouts={view.callouts}
         query={query}
         onQueryChange={setQuery}
         filtered={filtered}

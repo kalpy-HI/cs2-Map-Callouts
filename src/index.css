@@ -177,7 +177,8 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 6px;
-  object-fit: cover;
+  /* 官方地圖圖示為完整方形圖樣，用 contain 避免被裁切 */
+  object-fit: contain;
   background: var(--bg);
   flex-shrink: 0;
 }
@@ -295,6 +296,37 @@ body {
   font-size: 15px;
   text-align: center;
   pointer-events: none;
+}
+
+/* ── 樓層切換（多層地圖，如 Nuke）── */
+.level-controls {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: flex;
+  gap: 4px;
+  z-index: 2;
+}
+.level-controls button {
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border-strong);
+  background: #14120ecc;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.level-controls button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.level-controls button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 /* ── 縮放控制（+ / − / 重設）── */

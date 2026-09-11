@@ -19,6 +19,18 @@ export interface Callout {
   labelPos?: [number, number];
 }
 
+/** 多層地圖的單一樓層（例如 Nuke 的上層／下層）。 */
+export interface MapLevel {
+  /** 樓層 id，例如 "default" / "lower" */
+  id: string;
+  /** 樓層顯示名稱，例如 "上層" */
+  nameZh: string;
+  /** 該樓層的雷達圖路徑（相對 public/） */
+  radarImage: string;
+  /** 該樓層的報點清單 */
+  callouts: Callout[];
+}
+
 export interface MapData {
   /** 唯一 id，例如 "mirage" */
   id: string;
@@ -26,10 +38,14 @@ export interface MapData {
   nameEn: string;
   /** 中文地圖名，例如 "荒漠迷城" */
   nameZh: string;
-  /** 雷達圖路徑（相對 public/），例如 "maps/mirage.svg" */
+  /** 官方地圖小圖示路徑（相對 public/），用於左側選單 */
+  icon?: string;
+  /** 雷達圖路徑（相對 public/）；多層地圖時作為預設樓層 */
   radarImage: string;
   /** 是否為現役地圖池 */
   active: boolean;
   /** 該地圖的報點清單；尚未建立資料時為空陣列 */
   callouts: Callout[];
+  /** 多層地圖的樓層清單（如 Nuke）；有值時以樓層的圖與報點為準 */
+  levels?: MapLevel[];
 }

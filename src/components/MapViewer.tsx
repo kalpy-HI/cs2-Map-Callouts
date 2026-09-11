@@ -4,6 +4,12 @@ import CalloutOverlay from './CalloutOverlay';
 
 interface Props {
   map: MapData;
+  /** 目前樓層的雷達圖（單層地圖即為地圖本身的圖） */
+  radarImage: string;
+  /** 目前樓層的報點 */
+  callouts: MapData['callouts'];
+  levelIdx: number;
+  onLevelChange: (i: number) => void;
   highlightId: string | null;
   visibleIds: Set<string> | null;
   onHover: (id: string | null) => void;
@@ -28,7 +34,17 @@ function clampPan(pos: number, stageSize: number, contentSize: number) {
  * 已經點陣化的畫面直接拉伸，文字會跟著模糊；改成調整 .map-content 的實際
  * width/height，瀏覽器會依新尺寸重新繪製 SVG 文字，放大後仍然清晰。
  */
-export default function MapViewer({ map, highlightId, visibleIds, onHover, showAllLabels }: Props) {
+export default function MapViewer({
+  map,
+  radarImage,
+  callouts,
+  levelIdx,
+  onLevelChange,
+  highlightId,
+  visibleIds,
+  onHover,
+  showAllLabels,
+}: Props) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
@@ -45,11 +61,11 @@ export default function MapViewer({ map, highlightId, visibleIds, onHover, showA
     img.onload = () => {
       if (!cancelled) setNatural({ w: img.naturalWidth, h: img.naturalHeight });
     };
-    img.src = asset(map.radarImage);
+    img.src = asset(radarImage);
     return () => {
       cancelled = true;
     };
-  }, [map.radarImage]);
+  }, [radarImage]);
 
   // 追蹤 .viewer 可用空間（視窗大小、左右欄開合都會改變）。
   useEffect(() => {
@@ -158,10 +174,10 @@ export default function MapViewer({ map, highlightId, visibleIds, onHover, showA
             className="map-content"
             style={{ width: base.w * zoom, height: base.h * zoom, left: pan.x, top: pan.y }}
           >
-            <img src={asset(map.radarImage)} alt={`${map.nameZh} 雷達圖`} draggable={false} />
-            {map.callouts.length > 0 && (
+            <img src={asset(radarImage)} alt={`${map.nameZh} 雷達圖`} draggable={false} />
+            {callouts.length > 0 && (
               <CalloutOverlay
-                callouts={map.callouts}
+                callouts={callouts}
                 highlightId={highlightId}
                 visibleIds={visibleIds}
                 onHover={onHover}
@@ -169,11 +185,24 @@ export default function MapViewer({ map, highlightId, visibleIds, onHover, showA
               />
             )}
           </div>
-          {map.callouts.length === 0 && (
+          {callouts.length === 0 && (
             <div className="empty-hint">
               此地圖報點資料待補
               <br />
               （在 src/data/maps.ts 補上 callouts 即可）
+            </div>
+          )}
+          {map.levels && map.levels.length > 1 && (
+            <div className="level-controls">
+              {map.levels.map((lv, i) => (
+                <button
+                  key={lv.id}
+                  className={i === levelIdx ? 'active' : undefined}
+                  onClick={() => onLevelChange(i)}
+                >
+                  {lv.nameZh}
+                </button>
+              ))}
             </div>
           )}
           <div className="zoom-controls">
