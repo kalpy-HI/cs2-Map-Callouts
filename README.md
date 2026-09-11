@@ -67,10 +67,18 @@ src/
 > **素材來源**：`public/maps/` 的雷達圖與 `public/maps/icons/` 的官方地圖圖示，取自
 > [MurkyYT/cs2-map-icons](https://github.com/MurkyYT/cs2-map-icons)（自遊戲本體自動抽取）。
 >
-> **報點座標怎麼來的**：Ancient / Nuke / Inferno / Anubis 的報點是用官方 `env_cs_place`
-> 導航網格資料（place 名稱 + 世界座標，取自 awpy 1.x 內建 nav 資料）搭配官方雷達轉換參數
-> （`pos_x` / `pos_y` / `scale`）換算成 0..1 座標，非目測標註。Mirage / Dust II 則是以座標格
-> 人工校準。Train 因 CS2 已重製、舊 nav 座標不適用，報點待另行校準。
+> **報點座標怎麼來的**：Ancient / Nuke / Inferno / Anubis / Cache 的報點是用官方
+> `env_cs_place` 導航網格資料（place 名稱 + 世界座標，取自 awpy 1.x 內建 nav 資料）搭配官方
+> 雷達轉換參數（`pos_x` / `pos_y` / `scale`）換算成 0..1 座標，非目測標註；每張都畫回雷達圖
+> 驗證過。Mirage / Dust II 則是以座標格人工校準。
+>
+> Train 已自圖池移除（CS2 重製後舊 nav 座標不適用）；Cache 重製後世界座標未變，因此沿用同一套
+> 流程即可精準對齊。
+
+### 雙方預設重生點
+
+各地圖的 `spawns` 欄位存有 CT／T 各 5 位的預設站位（由官方 `CTSpawn` / `TSpawn` 區域沿長軸
+散開算出）。開啟戰術板時會自動帶入，工具列的「重生點」可隨時重設回預設位置。
 
 ## 部署（GitHub Pages · 自動）
 

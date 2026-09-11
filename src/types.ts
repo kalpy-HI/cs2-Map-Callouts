@@ -79,6 +79,8 @@ export interface MapData {
   active: boolean;
   /** 該地圖的報點清單；尚未建立資料時為空陣列 */
   callouts: Callout[];
+  /** 雙方預設重生點（各 5 位），開啟戰術板時自動帶入 */
+  spawns?: { ct: [number, number][]; t: [number, number][] };
   /** 多層地圖的樓層清單（如 Nuke）；有值時以樓層的圖與報點為準 */
   levels?: MapLevel[];
 }

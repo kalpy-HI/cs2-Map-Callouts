@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { maps, getMapById } from './data/maps';
 import type { TacticTool, TacticsData } from './types';
-import { EMPTY_TACTICS, TACTIC_COLORS, loadTactics, saveTactics, tacticsKey } from './tactics';
+import { EMPTY_TACTICS, TACTIC_COLORS, loadTactics, saveTactics, spawnMarkers, tacticsKey } from './tactics';
 import TacticsToolbar, { type ArmedMarker } from './components/TacticsToolbar';
 import MapSelector from './components/MapSelector';
 import MapViewer from './components/MapViewer';
@@ -45,7 +45,9 @@ export default function App() {
 
   const levelId = map.levels ? map.levels[Math.min(levelIdx, map.levels.length - 1)].id : 'default';
   const tKey = tacticsKey(map.id, levelId);
-  const tactics = store[tKey] ?? EMPTY_TACTICS;
+  // 尚未動過的地圖直接帶入雙方預設重生點；使用者清空後會寫入空物件，就不再重帶。
+  const defaultMarkers = useMemo(() => spawnMarkers(map, levelIdx), [map, levelIdx]);
+  const tactics = store[tKey] ?? { strokes: [], markers: defaultMarkers };
 
   useEffect(() => {
     saveTactics(store);
@@ -192,6 +194,8 @@ export default function App() {
           canUndo={canUndo}
           onClear={() => setTactics(EMPTY_TACTICS)}
           isEmpty={tacticsEmpty}
+          onResetSpawns={() => setTactics({ ...tactics, markers: defaultMarkers })}
+          hasSpawns={defaultMarkers.length > 0}
         />
       )}
 

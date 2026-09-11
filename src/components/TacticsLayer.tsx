@@ -1,5 +1,5 @@
 import type { TacticMarker, TacticStroke, TacticTool, TacticsData } from '../types';
-import { TEAM_COLORS } from '../tactics';
+import { MARKER_FONT, MARKER_RADIUS, TEAM_COLORS } from '../tactics';
 
 interface Props {
   data: TacticsData;
@@ -120,8 +120,23 @@ export default function TacticsLayer({
               onMarkerPointerDown(e, m);
             }}
           >
-            <ellipse cx={x} cy={y} rx={0.021} ry={0.021} fill={fill} stroke="#0008" strokeWidth={0.004} />
-            <text x={x} y={y + 0.008} textAnchor="middle" fontSize={0.026} fontWeight="800" fill="#10100c">
+            <ellipse
+              cx={x}
+              cy={y}
+              rx={MARKER_RADIUS}
+              ry={MARKER_RADIUS}
+              fill={fill}
+              stroke="#0009"
+              strokeWidth={0.0022}
+            />
+            <text
+              x={x}
+              y={y + MARKER_FONT * 0.34}
+              textAnchor="middle"
+              fontSize={MARKER_FONT}
+              fontWeight="800"
+              fill="#10100c"
+            >
               {m.label}
             </text>
           </g>

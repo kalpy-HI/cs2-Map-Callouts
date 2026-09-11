@@ -1,4 +1,4 @@
-import type { TacticsData } from './types';
+import type { MapData, TacticMarker, TacticsData } from './types';
 
 /** 戰術板在瀏覽器的儲存 key（依地圖＋樓層分開存）。 */
 const STORAGE_KEY = 'cs2-callouts:tactics:v1';
@@ -12,6 +12,21 @@ export const TACTIC_COLORS = ['#ff3b30', '#ffcc00', '#34c759', '#32ade6', '#ffff
 export const TEAM_COLORS: Record<'ct' | 't', string> = { ct: '#4aa3ff', t: '#e8b83c' };
 
 export const newId = () => Math.random().toString(36).slice(2, 10);
+
+/** 站位圓點尺寸（0..1 正規化）；參考 scope.gg 的小圓點，避免蓋住地形。 */
+export const MARKER_RADIUS = 0.0125;
+export const MARKER_FONT = 0.017;
+
+/**
+ * 依地圖的預設重生點產生雙方各 5 位站位標記。
+ * 只在第一層（多層地圖的上層）給，下層不放重生點。
+ */
+export function spawnMarkers(map: MapData, levelIdx: number): TacticMarker[] {
+  if (!map.spawns || levelIdx !== 0) return [];
+  const make = (team: 'ct' | 't', pts: [number, number][]) =>
+    pts.map((point, i) => ({ id: `spawn-${team}-${i}`, team, label: String(i + 1), point }));
+  return [...make('ct', map.spawns.ct), ...make('t', map.spawns.t)];
+}
 
 /** 地圖＋樓層組成的儲存鍵值。 */
 export const tacticsKey = (mapId: string, levelId: string) => `${mapId}:${levelId}`;

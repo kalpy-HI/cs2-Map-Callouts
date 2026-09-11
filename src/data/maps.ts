@@ -23,6 +23,10 @@ export const maps: MapData[] = [
     icon: 'maps/icons/mirage.png',
     radarImage: 'maps/mirage.webp',
     active: true,
+    spawns: {
+      ct: [[0.297, 0.68], [0.311, 0.68], [0.325, 0.68], [0.339, 0.68], [0.353, 0.68]],
+      t: [[0.854, 0.36], [0.869, 0.36], [0.885, 0.36], [0.901, 0.36], [0.916, 0.36]],
+    },
     callouts: [
       { id: 'b-white-car', nameZh: '白車', nameEn: 'White Car', point: [0.155, 0.19] },
       { id: 'b-second-floor', nameZh: 'B二樓', nameEn: 'B Balcony', point: [0.245, 0.18], radius: 0.035 },
@@ -74,6 +78,10 @@ export const maps: MapData[] = [
     icon: 'maps/icons/dust2.png',
     radarImage: 'maps/dust2.png',
     active: true,
+    spawns: {
+      ct: [[0.572, 0.18], [0.586, 0.18], [0.6, 0.18], [0.614, 0.18], [0.628, 0.18]],
+      t: [[0.329, 0.9], [0.344, 0.9], [0.36, 0.9], [0.376, 0.9], [0.391, 0.9]],
+    },
     callouts: [
       { id: 'sniper', nameZh: '狙位', nameEn: 'Sniper', point: [0.06, 0.06] },
       { id: 'b-site', nameZh: 'B點', nameEn: 'B Site', point: [0.15, 0.12], radius: 0.045 },
@@ -129,6 +137,10 @@ export const maps: MapData[] = [
     icon: 'maps/icons/inferno.png',
     radarImage: 'maps/inferno.png',
     active: true,
+    spawns: {
+      ct: [[0.829, 0.269], [0.829, 0.304], [0.829, 0.34], [0.829, 0.376], [0.829, 0.411]],
+      t: [[0.129, 0.659], [0.129, 0.7], [0.129, 0.742], [0.129, 0.784], [0.129, 0.825]],
+    },
     callouts: [
       { id: 'ruins', nameZh: '廢墟', nameEn: 'Ruins', point: [0.608, 0.146], rx: 0.085, ry: 0.05 },
       { id: 'bombsite-b', nameZh: 'B點', nameEn: 'B Site', point: [0.503, 0.217], rx: 0.075, ry: 0.107 },
@@ -164,6 +176,10 @@ export const maps: MapData[] = [
     // Nuke 為上下雙層，報點依官方高度分層（AltitudeMin = -495）
     radarImage: 'maps/nuke.png',
     active: true,
+    spawns: {
+      ct: [[0.806, 0.495], [0.839, 0.495], [0.872, 0.495], [0.905, 0.495], [0.938, 0.495]],
+      t: [[0.134, 0.544], [0.176, 0.544], [0.218, 0.544], [0.26, 0.544], [0.302, 0.544]],
+    },
     callouts: [],
     levels: [
       {
@@ -220,6 +236,10 @@ export const maps: MapData[] = [
     icon: 'maps/icons/ancient.png',
     radarImage: 'maps/ancient.png',
     active: true,
+    spawns: {
+      ct: [[0.433, 0.179], [0.459, 0.179], [0.486, 0.179], [0.513, 0.179], [0.539, 0.179]],
+      t: [[0.479, 0.765], [0.479, 0.794], [0.479, 0.823], [0.479, 0.852], [0.479, 0.881]],
+    },
     callouts: [
       { id: 'back-hall', nameZh: '後廳', nameEn: 'Back Hall', point: [0.311, 0.154], rx: 0.049, ry: 0.042 },
       { id: 'ct-spawn', nameZh: '警家（CT出生點）', nameEn: 'CT Spawn', point: [0.481, 0.205], rx: 0.076, ry: 0.054 },
@@ -243,14 +263,41 @@ export const maps: MapData[] = [
     ],
   },
   {
-    id: 'train',
-    nameEn: 'Train',
-    nameZh: '列車調度場',
-    icon: 'maps/icons/train.png',
-    radarImage: 'maps/train.png',
+    id: 'cache',
+    nameEn: 'Cache',
+    nameZh: '車庫倉庫',
+    icon: 'maps/icons/cache.png',
+    radarImage: 'maps/cache.png',
     active: true,
-    // CS2 已重製 Train，舊版 nav 座標不適用，報點待另行校準
-    callouts: [],
+    spawns: {
+      ct: [[0.098, 0.426], [0.098, 0.463], [0.098, 0.499], [0.098, 0.535], [0.098, 0.572]],
+      t: [[0.786, 0.581], [0.818, 0.581], [0.85, 0.581], [0.882, 0.581], [0.914, 0.581]],
+    },
+    callouts: [
+      { id: 'quad', nameZh: '中庭', nameEn: 'Quad', point: [0.302, 0.195], rx: 0.022, ry: 0.022 },
+      { id: 'squeaky', nameZh: '吱吱門', nameEn: 'Squeaky', point: [0.415, 0.2], rx: 0.024, ry: 0.027 },
+      { id: 'bombsite-a', nameZh: 'A點', nameEn: 'A Site', point: [0.33, 0.295], rx: 0.074, ry: 0.078 },
+      { id: 'long-a', nameZh: 'A長', nameEn: 'Long A', point: [0.546, 0.302], rx: 0.04, ry: 0.098 },
+      { id: 'forklift', nameZh: '堆高機', nameEn: 'Forklift', point: [0.403, 0.33], rx: 0.032, ry: 0.021 },
+      { id: 'warehouse', nameZh: '倉庫', nameEn: 'Warehouse', point: [0.475, 0.344], rx: 0.049, ry: 0.118 },
+      { id: 'catwalk', nameZh: '貓道', nameEn: 'Catwalk', point: [0.387, 0.352], rx: 0.053, ry: 0.021 },
+      { id: 'truck', nameZh: '卡車', nameEn: 'Truck', point: [0.198, 0.392], rx: 0.029, ry: 0.038 },
+      { id: 'a-ramp', nameZh: 'A斜坡', nameEn: 'A Ramp', point: [0.32, 0.446], rx: 0.023, ry: 0.057 },
+      { id: 'roof', nameZh: '屋頂', nameEn: 'Roof', point: [0.495, 0.457], rx: 0.029, ry: 0.018 },
+      { id: 'ct-spawn', nameZh: '警家（CT出生點）', nameEn: 'CT Spawn', point: [0.098, 0.499], rx: 0.057, ry: 0.104 },
+      { id: 'garage', nameZh: '車庫', nameEn: 'Garage', point: [0.637, 0.522], rx: 0.118, ry: 0.087 },
+      { id: 'middle', nameZh: '中路', nameEn: 'Mid', point: [0.375, 0.545], rx: 0.118, ry: 0.055 },
+      { id: 't-spawn', nameZh: '匪家（T出生點）', nameEn: 'T Spawn', point: [0.85, 0.581], rx: 0.091, ry: 0.071 },
+      { id: 'ducts', nameZh: '通風管', nameEn: 'Ducts', point: [0.439, 0.617], rx: 0.018, ry: 0.018 },
+      { id: 'entrance', nameZh: '入口', nameEn: 'Entrance', point: [0.215, 0.628], rx: 0.052, ry: 0.1 },
+      { id: 'dumpster', nameZh: '垃圾箱', nameEn: 'Dumpster', point: [0.55, 0.63], rx: 0.04, ry: 0.022 },
+      { id: 'storage-room', nameZh: '儲藏室', nameEn: 'Storage', point: [0.35, 0.636], rx: 0.071, ry: 0.018 },
+      { id: 'rafters', nameZh: '屋樑', nameEn: 'Rafters', point: [0.279, 0.687], rx: 0.035, ry: 0.028 },
+      { id: 'back', nameZh: '後方', nameEn: 'Back', point: [0.703, 0.701], rx: 0.077, ry: 0.041 },
+      { id: 'long-hall', nameZh: '長廊', nameEn: 'Long Hall', point: [0.51, 0.724], rx: 0.093, ry: 0.062 },
+      { id: 'bombsite-b', nameZh: 'B點', nameEn: 'B Site', point: [0.335, 0.763], rx: 0.055, ry: 0.062 },
+      { id: 'window', nameZh: '窗', nameEn: 'Window', point: [0.503, 0.816], rx: 0.06, ry: 0.022 },
+    ],
   },
   {
     id: 'anubis',
@@ -259,6 +306,10 @@ export const maps: MapData[] = [
     icon: 'maps/icons/anubis.png',
     radarImage: 'maps/anubis.png',
     active: true,
+    spawns: {
+      ct: [[0.378, 0.148], [0.405, 0.148], [0.432, 0.148], [0.459, 0.148], [0.486, 0.148]],
+      t: [[0.423, 0.882], [0.469, 0.882], [0.514, 0.882], [0.559, 0.882], [0.605, 0.882]],
+    },
     callouts: [
       { id: 'water', nameZh: '水道', nameEn: 'Water', point: [0.518, 0.082], rx: 0.11, ry: 0.035 },
       { id: 'ct-spawn', nameZh: '警家（CT出生點）', nameEn: 'CT Spawn', point: [0.413, 0.130], rx: 0.077, ry: 0.044 },

@@ -17,6 +17,9 @@ interface Props {
   canUndo: boolean;
   onClear: () => void;
   isEmpty: boolean;
+  /** 把雙方站位重設回預設重生點（保留已畫的線） */
+  onResetSpawns: () => void;
+  hasSpawns: boolean;
 }
 
 const TOOLS: { id: TacticTool; icon: string; label: string }[] = [
@@ -38,6 +41,8 @@ export default function TacticsToolbar({
   canUndo,
   onClear,
   isEmpty,
+  onResetSpawns,
+  hasSpawns,
 }: Props) {
   return (
     <div className="tactics-toolbar">
@@ -97,6 +102,14 @@ export default function TacticsToolbar({
       </div>
 
       <div className="tt-group">
+        <button
+          onClick={onResetSpawns}
+          disabled={!hasSpawns}
+          title="回到雙方預設重生點"
+          aria-label="回到雙方預設重生點"
+        >
+          ⤺重生點
+        </button>
         <button onClick={onUndo} disabled={!canUndo} title="復原" aria-label="復原">
           ↶
         </button>
